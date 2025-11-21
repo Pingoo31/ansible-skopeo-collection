@@ -47,6 +47,17 @@ test_skopeo_copy() {
 		localhost
 }
 
+test_skopeo_delete() {
+	ANSIBLE_LIBRARY=./plugins/modules \
+	ANSIBLE_MODULE_UTILS=./plugins/module_utils \
+		ansible -m skopeo_delete -a \
+		'src_image=docker://quay.dev/misc/busybox:1.36 \
+		username='"$REGISTRY_USERNAME"' \
+		password='"$REGISTRY_PASSWORD"' \
+		tls_verify=false' \
+		localhost
+}
+
 case "$1" in
     lint)
         lint
@@ -63,8 +74,11 @@ case "$1" in
     copy)
         test_skopeo_copy
         ;;
+    delete)
+        test_skopeo_delete
+        ;;
     *)
-        echo "Comando non valido. Usa: lint, list-docs, login, inspect, copy"
+        echo "Comando non valido. Usa: lint, list-docs, login, inspect, copy, delete"
         exit 1
         ;;
 esac
