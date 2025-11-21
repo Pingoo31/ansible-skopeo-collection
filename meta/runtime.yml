@@ -6,3 +6,4 @@ action_groups:
     - skopeo_login
     - skopeo_inspect
     - skopeo_copy
+    - skopeo_delete
