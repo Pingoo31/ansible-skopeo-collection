@@ -59,6 +59,13 @@ options:
         required: false
         default: true
         type: bool
+    options:
+        description: |
+            Set options for the copy command.
+            Example: --all --preserve-digests
+            See at https://github.com/containers/skopeo/blob/main/docs/skopeo-copy.1.md#options
+        required: false
+        type: str
 
 author:
     - Antonio Gravino (@antoniogrv)
@@ -69,6 +76,12 @@ EXAMPLES = r"""
   local.skopeo.skopeo_copy:
     src_image: docker://source.io/my/image:tag
     dest_image: docker://destination.io/my/image:tag
+
+- name: Copy a container image from one registry to another, with digest preservation
+  local.skopeo.skopeo_copy:
+    src_image: docker://source.io/my/image:tag
+    dest_image: docker://destination.io/my/image:tag
+    options: --all --preserve-digests
 
 - name: Copy a container image from one registry to another, as an authenticated users on the destination side
   local.skopeo.skopeo_copy:
@@ -120,14 +133,20 @@ def run_module():
         src_password=dict(type="str", required=False, no_log=True),
         dest_username=dict(type="str", required=False),
         dest_password=dict(type="str", required=False, no_log=True),
+        options=dict(type='str', required=False)
     )
 
     result = dict(changed=False, return_code="")
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
+    OPTIONS: str = ""
+    if module.params["options"]:
+        OPTIONS = module.params["options"]
+
     skopeo_command_args = [
         OPERATION,
+        OPTIONS,
         f"--src-tls-verify={str(module.params['src_tls_verify'])}",
         f"--dest-tls-verify={str(module.params['dest_tls_verify'])}",
     ]
