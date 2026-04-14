@@ -16,7 +16,7 @@ class SkopeoCommand:
         self,
         executable: str = DEFAULT_SKOPEO_EXECUTABLE,
         command: list[str] = None,
-        timeout: int = 60,
+        timeout: int = 180,
     ) -> None:
         """Initializes a SkopeoCommand instance."""
 
